@@ -1,0 +1,140 @@
+<header>
+  <mat-toolbar>
+    <span>Carona App - Motorista</span>
+    <button mat-button id="menuUser" [matMenuTriggerFor]="menu" *ngIf="page != 1">
+      <mat-icon aria-hidden="false" aria-label="Example home icon">
+        person
+      </mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item>Nome: {{nome}}</button>
+      <button mat-menu-item>Telefone: {{telefone}}</button>
+    </mat-menu>
+    <button mat-button matBadge="1" (click)="mostrarViagemCompativel()" [matBadgeHidden]="passageiroInfo.length === 0" *ngIf="page != 1">
+    <mat-icon>
+      notifications
+    </mat-icon>
+    </button>
+  </mat-toolbar>
+</header>
+
+
+<body>
+<div id= "CadastroHTML" *ngIf="page == 1">
+  <h2>Olá!
+  <br>
+  Vamos fazer seu cadastro!</h2>
+  <form name="cadastro">
+    <mat-form-field appearance="fill">
+      <mat-label for="Nome">Nome</mat-label>
+      <input matInput placeholder="" value="" id="Nome" #Nome required="required">
+    </mat-form-field>
+    <mat-form-field appearance="fill">
+      <mat-label for="Telefone">Telefone</mat-label>
+      <input matInput placeholder="" value="" id="Telefone" #Telefone required="required">
+    </mat-form-field>
+  </form>
+  <button mat-raised-button color="primary" ng-disable="(Nome.value.length === 0 || Telefone.value.length === 0)" (click)="cadastro(Nome.value, Telefone.value)">
+    Cadastro
+  </button>
+  </div>
+  <mat-tab-group *ngIf="page == 2">
+    <mat-tab label="Consultar Viagens" >
+      <div *ngIf="page != 1">
+        <form name="consulta">
+          <mat-form-field appearance="fill">
+            <mat-label for="Origem">Origem</mat-label>
+            <input matInput placeholder="" value="" id="Origem" #Origem required="required">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label for="Destino">Destino</mat-label>
+            <input matInput placeholder="" value="" id="Destino" #Destino required="required">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Data</mat-label>
+            <input matInput [matDatepicker]="picker" #Data id="Data">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </form>
+        <button mat-raised-button color="primary" class="add-button" (click)="consultaViagens(Origem.value, Destino.value, Data.value)">
+          Consultar Viagens
+        </button>
+        <br>
+        <br>
+      <h2 *ngIf="listadeViagens.length === 0">Não encontramos nenhuma viagem, deseja registrar interesse na data?</h2>
+      <button *ngIf="listadeViagens.length === 0" mat-raised-button color="primary" class="add-button" (click)="interesseEmPassageira(Origem.value, Destino.value, Data.value); openSnackBar('Registro realizado com sucesso!', 'Ok')">
+        Registrar Interesse
+      </button>
+        <div>
+          <p>Encontramos a(s) seguintes viagens relacionadas:</p>
+          <mat-accordion>
+            <mat-expansion-panel *ngFor="let corrida of listadeViagens" >
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Nome: {{corrida[0][1]}}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <p>
+                Nome: {{corrida[0][1]}}
+                <br>
+                Contato: {{corrida[0][2]}}
+              </p>
+            </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+      </div>
+     </mat-tab>
+    <mat-tab label="Registrar Interesse">
+      <div *ngIf="page != 1">
+        <form name="interesse" >
+          <mat-form-field appearance="fill">
+            <mat-label for="Origem">Origem</mat-label>
+            <input matInput placeholder="" value="" id="Origem" #Origem required="required">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label for="Destino">Destino</mat-label>
+            <input matInput placeholder="" value="" id="Destino" #Destino required="required">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Data</mat-label>
+            <input matInput [matDatepicker]="picker" #Data id="Data">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </form>
+        <button mat-raised-button color="primary" class="add-button" (click)="interesseEmPassageira(Origem.value, Destino.value, Data.value); openSnackBar('Registro realizado com sucesso!',  'Ok')">
+          Registrar Interesse
+        </button>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Meus Interesses">
+      <mat-accordion>
+        <mat-expansion-panel *ngFor="let usuario of viagensDoUsuario" >
+
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              ID: {{usuario[0]}}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <p>
+            Origem:{{usuario[2]}}
+            <br>
+              Destino:{{usuario[3]}}
+            <br>
+            Data:{{usuario[4]}}
+          </p>
+        <button class="add-button" mat-raised-button color="warn" (click)="removeInteresseEmPassageira(usuario[0])">
+            Remover Interesse
+        </button>
+        </mat-expansion-panel>
+        </mat-accordion>
+     </mat-tab>
+  </mat-tab-group>
+  <div *ngIf="page == 4">
+    <h2>Viagens Compatíveis</h2>
+    <h3>Passageiro: {{passageiroInfo[0]}}</h3>
+    <h3>Contato: {{passageiroInfo[1]}}</h3>
+  </div>
+</body>
